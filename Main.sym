@@ -1,15 +1,20 @@
 //Symbol Name		Page Address
 //----------------	------------
-//	IVT                     4028
-//	Interrupt               4029
-//	KBSR                    402A
-//	letter                  402B
+//	IVT                     4033
+//	Interrupt               4034
+//	KBSR                    4035
+//	letter                  4036
 //	loop                    400A
-//	negA                    402C
-//	negG                    402E
-//	negU                    402D
-//	pipe                    402F
-//	stack                   4027
+//	negA                    4037
+//	negG                    4039
+//	negU                    4038
+//	pipe                    403A
+//	reset                   4009
+//	set0                    4027
+//	set1                    4029
+//	set2                    402C
+//	set3                    402F
+//	stack                   4032
 //	state0                  4015
-//	state1                  401A
-//	state2                  401F
+//	state1                  4019
+//	state2                  4020

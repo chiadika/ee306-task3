@@ -30,7 +30,7 @@ AND R0, R0, #0
 STI R0, letter
 
 
-	AND R5, R5, #0		; clearing state register
+reset	AND R5, R5, #0		; clearing state register
 loop	LDI R0, letter
 	BRz loop
 	PUTC
@@ -45,17 +45,17 @@ loop	LDI R0, letter
 state0	LD R4, negA	
 	ADD R0, R0, R4		;set state to 1,
 	BRnp loop
-	ADD R5, R5, 1
-	BR loop			;if it's any other character, go back to loop
+	BR set1			;if it's any other character, go back to loop
 state1	LD R4, negU	
 	ADD R0, R0, R4		;checking if char is a U
-	BRnp loop
-	ADd R5, R5, 1		;state goes from 1 to 2
+	BRz set2
+	ADD R0, R0, #10
+	ADD R0, R0, #10		;checking if char is A in state1
+	BRnp set0
 	BR loop
 state2	LD R4, negG	
 	ADD R0, R0, R4
-	BRnp loop
-	ADD R5, R5, 1
+	BRnp set0
 	LD R0, pipe
 	PUTC
 	TRAP x25		
@@ -64,6 +64,26 @@ state2	LD R4, negG
 	BR loop			; R0 still holds char at this point
 	
 
+	
+
+set0
+AND R5, R5, #0
+BR loop
+
+set1
+AND R5, R5, #0
+ADD R5, R5, #1
+BR loop
+
+set2
+AND R5, R5, #0
+ADD R5, R5, #2
+BR loop
+
+set3
+AND R5, R5, #0
+ADD R5, R5, #3
+BR loop
 	
 	
 
