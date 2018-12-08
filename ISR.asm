@@ -13,11 +13,11 @@ LDI R0, KBDR
 LD R1, negA
 ADD R1, R0, R1
 BRz store			;store A
-ADD R1, R0, #-2
+ADD R1, R1, #-2
 BRz store			;store C
-ADD R1, R0, #-4		
+ADD R1, R1, #-4		
 BRz store			;store G
-ADD R1, R0, #-14		
+ADD R1, R1, #-14		
 BRz store 			;store U
 BR end
 store
