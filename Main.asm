@@ -43,7 +43,7 @@ loop	LDI R0, letter
 	ADD R4, R5, -2		;checking if state is 2
 	BRz state2
 state0	LD R4, negA	
-	ADD R0, R0, R4		;set state to 1,
+	ADD R0, R0, R4		;set state to 1, only if char is A
 	BRnp loop
 	BR set1			;if it's any other character, go back to loop
 state1	LD R4, negU	
@@ -51,17 +51,57 @@ state1	LD R4, negU
 	BRz set2
 	ADD R0, R0, #10
 	ADD R0, R0, #10		;checking if char is A in state1
-	BRnp set0
+	BRnp set0		;loops back if there's another eg ('AA')
 	BR loop
 state2	LD R4, negG	
 	ADD R0, R0, R4
-	BRnp set0
+	BRnp set1
 	LD R0, pipe
 	PUTC
-	TRAP x25		
+	BR set3
 		
+FSM1	LDI R0, letter
+	BRz FSM1
+	PUTC
+	AND R1, R1, #0
+	STI R1, letter
+	ADD R4, R5, #-3		;checking if state is 3 
+	BRz state3
+	ADD R4, R5, -4		;checking if state is 4
+	BRz state4		
+	ADD R4, R5, -5		;checking if state is 5
+	BRz state5
+	ADD R4, R5, -6		;checking if state is 6
+	BRz state6		
 
-	BR loop			; R0 still holds char at this point
+state3	LD R4, negU
+	ADD R0, R0, R4		;checking if char is a U
+	BRz set4	
+	BR FSM1
+
+state4	LD R4, negA	
+	ADD R0, R0, R4		;checking if char is an A
+	BRz set5		
+	ADD R0, R0, #-6		;checking if char is a G
+	BRz set6		
+	ADD R0, R0, #-14	;checking if char is a U
+	BRnp set3
+	BR FSM1
+
+state5				; "UA-" looking for A or G
+	LD R4, negA
+	ADD R0, R0, R4
+	BRz end
+	ADD R0, R0, -6
+	BRz end
+	BR set3
+
+state6	LD R4, negA		; "UG-" looking for A
+	ADD R0, R0, R4
+	BRz end
+	BR set4
+
+end	TRAP x25
 	
 
 	
@@ -83,10 +123,22 @@ BR loop
 set3
 AND R5, R5, #0
 ADD R5, R5, #3
-BR loop
-	
-	
+BR FSM1
 
+set4
+AND R5, R5, #0
+ADD R5, R5, #4
+BR FSM1
+
+set5
+AND R5, R5, #0
+ADD R5, R5, #5
+BR FSM1
+
+set6
+AND R5, R5, #0
+ADD R5, R5, #6
+BR FSM1
 
 
 stack .FILL x4000
