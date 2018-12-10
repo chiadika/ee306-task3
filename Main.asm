@@ -55,7 +55,10 @@ state1	LD R4, negU
 	ADD R0, R0, #10		;checking if char is A in state1
 	BRnp set0		;loops back if there's another eg ('AA')
 	BR loop
-state2	LD R4, negG	
+state2  LD R4, negA
+	ADD R4, R0, R4
+	BRz set1
+	LD R4, negG	
 	ADD R0, R0, R4
 	BRnp set0
 	LD R0, pipe		;Puts the pipe if we are at state 2 and a 'G' is encountered
@@ -96,12 +99,17 @@ state5				; "UA-" looking for A or G
 	BRz end
 	ADD R0, R0, -6
 	BRz end
+	ADD R0, R0, #-14	;check for a U
+	BRz set4
 	BR set3
 
 state6	LD R4, negA		; "UG-" looking for A
 	ADD R0, R0, R4
 	BRz end
-	BR set4
+	ADD R0, R0, #-10
+	ADD R0, R0, #-10
+	BRz set4
+	BR set3
 
 end	TRAP x25		;ending the code if state6 is entered
 	
