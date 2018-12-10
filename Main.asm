@@ -29,6 +29,8 @@ STI R0, KBSR
 AND R0, R0, #0
 STI R0, letter
 
+;BEGIN THE CODE FOR THE FSM 
+
 
 reset	AND R5, R5, #0		; clearing state register
 loop	LDI R0, letter
@@ -55,12 +57,12 @@ state1	LD R4, negU
 	BR loop
 state2	LD R4, negG	
 	ADD R0, R0, R4
-	BRnp set1
-	LD R0, pipe
+	BRnp set0
+	LD R0, pipe		;Puts the pipe if we are at state 2 and a 'G' is encountered
 	PUTC
 	BR set3
 		
-FSM1	LDI R0, letter
+FSM1	LDI R0, letter		;separate FSM code once the start codon is intitialized
 	BRz FSM1
 	PUTC
 	AND R1, R1, #0
@@ -79,7 +81,7 @@ state3	LD R4, negU
 	BRz set4	
 	BR FSM1
 
-state4	LD R4, negA	
+state4	LD R4, negA		;'U' has already been found
 	ADD R0, R0, R4		;checking if char is an A
 	BRz set5		
 	ADD R0, R0, #-6		;checking if char is a G
@@ -101,10 +103,12 @@ state6	LD R4, negA		; "UG-" looking for A
 	BRz end
 	BR set4
 
-end	TRAP x25
+end	TRAP x25		;ending the code if state6 is entered
 	
 
 	
+;HERE WE BRANCH TO THESE FUNCTIONS TO SET THE STATE BIT. THIS MAKES OUR CODE EASIER TO FOLLOW. 
+
 
 set0
 AND R5, R5, #0
@@ -141,6 +145,8 @@ ADD R5, R5, #6
 BR FSM1
 
 
+
+
 stack .FILL x4000
 IVT   .FILL x0180
 Interrupt .FILL x2600
@@ -148,7 +154,7 @@ KBSR .FILL xFE00
 letter .FILL x4600
 negA 	.FILL x-41
 negU 	.FILL x-55
-negG	.FILL x-47
+negG	.FILL x-47   	;never check for 'C' in our code
 pipe	.STRINGZ "|"
 
 		.END
